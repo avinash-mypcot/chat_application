@@ -1,0 +1,30 @@
+
+import 'package:dio/dio.dart';
+import 'package:get_it/get_it.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import 'auth/signin/data/api/signin_api.dart';
+import 'auth/signin/data/repository/signin_repository.dart';
+import 'auth/signin/data/services/signin_services.dart';
+import 'auth/signin/presentation/bloc/signin_bloc.dart';
+import 'auth/signup/data/api/signup_api.dart';
+import 'auth/signup/data/repository/signup_repository.dart';
+import 'auth/signup/data/services/signup_services.dart';
+import 'auth/signup/presentation/bloc/signup_bloc.dart';
+import 'chat/data/api/chat_api.dart';
+import 'chat/data/api/firebase_chat_api.dart';
+import 'chat/data/repository/chat_repository.dart';
+import 'chat/data/repository/firebase_repository.dart';
+import 'chat/data/services/chat_services.dart';
+import 'chat/data/services/firebase_service.dart';
+import 'chat/presentation/bloc/chat_bloc.dart';
+import 'chat/presentation/bloc/upload_image_bloc/upload_image_bloc.dart';
+import 'history/data/api/history_api.dart';
+import 'history/data/repository/history_repository.dart';
+import 'history/data/services/history_services.dart';
+import 'history/presentation/bloc/history_bloc.dart';
+import 'profile/data/api/profile_api.dart';
+import 'profile/data/repository/profile_repository.dart';
+import 'profile/data/services/profile_services.dart';
+import 'profile/presentation/bloc/profile_bloc.dart';
+part 'init_dependencies_main.dart';
