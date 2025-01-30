@@ -1,6 +1,4 @@
 import 'dart:developer';
-import 'dart:io';
-
 import 'package:auto_route/annotations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -64,7 +62,8 @@ class _ChatPageState extends State<ChatPage> {
   void initState() {
           
     context.read<ProfileBloc>().add(ProfileGetEvent());
-
+    context.read<CodeVerificationBloc>().add(VerifyCode("12345"));
+context.read<ChatBloc>().add(GetTodayChat(isVerified: true));
     super.initState();
   }
 

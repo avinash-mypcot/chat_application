@@ -1,9 +1,9 @@
 import 'dart:io';
 
-import 'package:ai_chatbot/core/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../theme/app_colors.dart';
 import '../../theme/textstyles.dart';
 import '../../utils/utils.dart';
 

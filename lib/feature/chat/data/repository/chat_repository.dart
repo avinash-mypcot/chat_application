@@ -10,6 +10,7 @@ class HomeRepository {
   HomeRepository({required ChatServices service})
       : _services = service,
         super();
+        
 
   Future<ChatModel> getInformation(String key ,Map<String,dynamic> massage) async {
     try {

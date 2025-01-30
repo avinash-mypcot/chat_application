@@ -7,10 +7,9 @@ class FirebaseServices {
   const FirebaseServices({required FirebaseChatApi api})
       : _api = api,
         super();
-  Future<ChatModel> getTodayChat(context) async {
+  Stream<ChatModel> getTodayChat(context)  {
     try {
-      var res = await _api.getTodayChat(context);
-      return res;
+      return _api.getTodayChat(context);
     } catch (e) {
       rethrow;
     }

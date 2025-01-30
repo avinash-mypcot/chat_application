@@ -1,8 +1,9 @@
-import 'package:ai_chatbot/feature/auth/signup/data/repository/signup_repository.dart';
-import 'package:ai_chatbot/feature/auth/signup/presentation/bloc/signup_state.dart';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../data/repository/signup_repository.dart';
 import 'signup_event.dart';
+import 'signup_state.dart';
 
 class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
   final SignUpRepository _repository;

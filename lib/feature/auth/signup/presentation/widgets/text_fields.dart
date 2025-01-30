@@ -1,9 +1,10 @@
-import 'package:ai_chatbot/core/theme/textstyles.dart';
-import 'package:ai_chatbot/feature/auth/signup/presentation/widgets/signup_textfield.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../../core/theme/app_colors.dart';
+import '../../../../../core/theme/textstyles.dart';
+import 'signup_textfield.dart';
 
 class TextFields extends StatelessWidget {
   const TextFields({

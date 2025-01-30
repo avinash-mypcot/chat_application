@@ -7,10 +7,9 @@ class FirebaseRepository {
       : _services = service,
         super();
 
-  Future<ChatModel> getTodayChat(context) async {
+  Stream<ChatModel> getTodayChatStream(context)  {
     try {
-      final response = await _services.getTodayChat(context);
-      return response;
+      return _services.getTodayChat(context);
     } catch (e) {
       rethrow;
     }

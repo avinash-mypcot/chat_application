@@ -1,6 +1,6 @@
-import 'package:ai_chatbot/feature/auth/signup/data/services/signup_services.dart';
 
 import '../model/signup_model.dart';
+import '../services/signup_services.dart';
 
 class SignUpRepository {
   final SignUpServices _service;

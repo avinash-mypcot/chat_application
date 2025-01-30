@@ -1,6 +1,7 @@
 
-import 'package:ai_chatbot/feature/auth/signup/data/model/signup_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+
+import '../model/signup_model.dart';
 
 class SignUpApi {
   FirebaseAuth auth = FirebaseAuth.instance;

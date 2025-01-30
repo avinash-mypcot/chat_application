@@ -1,12 +1,13 @@
-import 'package:ai_chatbot/core/router/app_router.gr.dart';
-import 'package:ai_chatbot/feature/auth/signup/presentation/bloc/signup_bloc.dart';
-import 'package:ai_chatbot/feature/auth/signup/presentation/bloc/signup_state.dart';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:ai_chatbot/core/theme/app_colors.dart';
-import 'package:ai_chatbot/core/theme/textstyles.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import '../../../../../core/router/app_router.gr.dart';
+import '../../../../../core/theme/app_colors.dart';
+import '../../../../../core/theme/textstyles.dart';
+import '../bloc/signup_bloc.dart';
+import '../bloc/signup_state.dart';
 import '../widgets/already_account.dart';
 import '../widgets/register_button.dart';
 import '../widgets/text_fields.dart';
