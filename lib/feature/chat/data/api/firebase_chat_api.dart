@@ -12,6 +12,7 @@ class FirebaseChatApi {
       EncryptionHelper('6gHdJ1kLmNoP8b2x', '3xTu9R4dWq8YtZkC');
   final FirebaseAuth auth = FirebaseAuth.instance;
   final uId = auth.currentUser?.uid;
+
   if (uId == null) {
     // Handle case where UID is null (user might not be authenticated)
     return Stream.value(ChatModel(
@@ -22,13 +23,13 @@ class FirebaseChatApi {
 
   final todayDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
 
-  return FirebaseFirestore.instance
+  Stream<ChatModel> model= FirebaseFirestore.instance
       .collection('chatModels')
       .doc(uId)
       .collection('chats')
       .doc(todayDate)
       .snapshots()
-      .map((snapshot) {
+      .map<ChatModel>((snapshot) {
         if (!snapshot.exists || snapshot.data() == null) {
           // No data found, return a default ChatModel
           return ChatModel(
@@ -103,6 +104,7 @@ class FirebaseChatApi {
         // Return the model as is if not verified
         return model;
       });
+      return model;
 }
 
 

@@ -169,31 +169,17 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
 //     emit(ChatException(errorMessage: "Failed to load chat data"));
 //   }
 // }
-StreamSubscription? _chatSubscription;
 
-void _onGetTodayChat(GetTodayChat event, Emitter<ChatState> emit) async {
+Stream _onGetTodayChat(GetTodayChat event, Emitter<ChatState> emit) async* {
   emit(ChatLoading());
 
-  try {
-    // Cancel any previous subscription to avoid multiple subscriptions.
-    _chatSubscription?.cancel();
 
-    // Listen to changes in Firestore in real-time.
-    _chatSubscription = firebaseRepository
-        .getTodayChatStream(event.isVerified)
-        .listen(
-      (res) {
-        emit(ChatLoaded(data: res));
-      },
-      onError: (error) {
-        log("Error: $error");
-        emit(ChatException(errorMessage: "Failed to load chat data"));
-      },
-      onDone: () {
-        log("Stream closed");
-        _chatSubscription = null; // Reset subscription when stream ends
-      },
-    );
+  try {
+    final stream = firebaseRepository.getTodayChatStream(event.isVerified);
+    await for (var snapshot in stream) {
+      emit(ChatLoaded(data: snapshot));
+      // yield ChatLoaded(data: snapshot);
+    }
   } catch (e) {
     log("Error: $e");
     emit(ChatException(errorMessage: "Failed to load chat data"));

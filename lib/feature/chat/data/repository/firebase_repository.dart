@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import '../../../chat/data/model/chat_model.dart';
 import '../services/firebase_service.dart';
 
@@ -9,7 +11,9 @@ class FirebaseRepository {
 
   Stream<ChatModel> getTodayChatStream(context)  {
     try {
-      return _services.getTodayChat(context);
+      final response =  _services.getTodayChat(context);
+      log("type${response.runtimeType}");
+      return response;
     } catch (e) {
       rethrow;
     }

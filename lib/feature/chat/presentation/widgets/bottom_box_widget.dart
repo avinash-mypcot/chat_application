@@ -1,7 +1,6 @@
 import 'dart:developer';
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:speech_to_text/speech_recognition_error.dart';
@@ -10,17 +9,12 @@ import 'package:speech_to_text/speech_to_text.dart';
 import '../../../../core/common/popup/pick_image_popup.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/textstyles.dart';
-import '../bloc/chat_bloc.dart';
-import '../bloc/upload_image_bloc/upload_image_bloc.dart';
 
 class BottomBoxWidget extends StatefulWidget {
-  const BottomBoxWidget({
-    super.key,
-    required this.scroll,
-    required this.msg,
-  });
+  const BottomBoxWidget({super.key, required this.scroll, required this.msg,required this.send});
   final VoidCallback scroll;
   final TextEditingController msg;
+  final VoidCallback send;
 
   @override
   State<BottomBoxWidget> createState() => _BottomBoxWidgetState();
@@ -28,54 +22,33 @@ class BottomBoxWidget extends StatefulWidget {
 
 class _BottomBoxWidgetState extends State<BottomBoxWidget> {
   bool isMic = true;
-  bool isListen = false;
-  File? _selectedImage; // Store selected image file
+  bool isListening = false;
+  File? _selectedImage;
   final ImagePicker _picker = ImagePicker();
   final SpeechToText _speechToText = SpeechToText();
 
   @override
   void initState() {
     super.initState();
-    _initSpeech();
+    _initializeSpeech();
   }
 
-  void _initSpeech() async {
-    await _speechToText.initialize(
-      onError: _onSpeechError,
-    );
-    setState(() {});
-  }
-
-  String? imageUrl;
-  Future<void> setProfileImage() async {
-    await showModelBottomSheet(
-        context: context,
-        imageFile: (File image) {
-          setState(() {
-            _selectedImage = image;
-          });
-          if (_selectedImage != null && mounted) {
-            log("API Called");
-            context
-                .read<UploadImageBloc>()
-                .add(UploadImageToGemini(image: _selectedImage!.path));
-          }
-        });
-  }
-
-  void _startListening() async {
-    await _speechToText.listen(
-      onResult: _onSpeechResult,
-    );
+  void _initializeSpeech() async {
+    await _speechToText.initialize(onError: _onSpeechError);
     setState(() {});
   }
 
   void _onSpeechError(SpeechRecognitionError error) {
     log('Speech recognition error: ${error.errorMsg}');
     setState(() {
-      isListen = false;
+      isListening = false;
       isMic = true;
     });
+  }
+
+  void _startListening() async {
+    await _speechToText.listen(onResult: _onSpeechResult);
+    setState(() {});
   }
 
   void _stopListening() async {
@@ -86,29 +59,20 @@ class _BottomBoxWidgetState extends State<BottomBoxWidget> {
   void _onSpeechResult(SpeechRecognitionResult result) {
     setState(() {
       widget.msg.text = result.recognizedWords;
-      if (widget.msg.text.isNotEmpty) {
-        isMic = false;
-      } else if (widget.msg.text.isEmpty) {
-        isMic = true;
-      }
-      isListen = false;
+      isMic = widget.msg.text.isEmpty;
+      isListening = false;
     });
   }
 
-  // Function to open image picker
-  Future<void> _pickImage() async {
-    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
-    if (pickedFile != null) {
-      setState(() {
-        _selectedImage = File(pickedFile.path);
-      });
-      if (_selectedImage != null && mounted) {
-        log("API Called");
-        context
-            .read<UploadImageBloc>()
-            .add(UploadImageToGemini(image: _selectedImage!.path));
-      }
-    }
+  Future<void> _pickProfileImage() async {
+    await showModelBottomSheet(
+      context: context,
+      imageFile: (File image) {
+        setState(() {
+          _selectedImage = image;
+        });
+      },
+    );
   }
 
   @override
@@ -117,14 +81,15 @@ class _BottomBoxWidgetState extends State<BottomBoxWidget> {
       padding: const EdgeInsets.all(8.0),
       child: Container(
         decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20.r),
-            border: Border.all(color: AppColors.kColorWhite)),
+          borderRadius: BorderRadius.circular(20.r),
+          border: Border.all(color: AppColors.kColorWhite),
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (_selectedImage != null) // Show the image if selected
+            if (_selectedImage != null)
               Padding(
-                padding: EdgeInsets.only(bottom: 8.0.sp, top: 8.sp, left: 8.sp),
+                padding: EdgeInsets.symmetric(vertical: 8.sp, horizontal: 8.sp),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(12.r),
                   child: Stack(
@@ -136,14 +101,12 @@ class _BottomBoxWidgetState extends State<BottomBoxWidget> {
                         fit: BoxFit.fill,
                       ),
                       Positioned(
-                          right: 2,
-                          child: GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  _selectedImage = null;
-                                });
-                              },
-                              child: Icon(Icons.cancel)))
+                        right: 2,
+                        child: GestureDetector(
+                          onTap: () => setState(() => _selectedImage = null),
+                          child: const Icon(Icons.cancel),
+                        ),
+                      )
                     ],
                   ),
                 ),
@@ -151,58 +114,23 @@ class _BottomBoxWidgetState extends State<BottomBoxWidget> {
             Row(
               children: [
                 Expanded(
-                  flex: 1,
                   child: Stack(
                     children: [
                       TextFormField(
-                        onChanged: (value) {
-                          if (widget.msg.text.isNotEmpty) {
-                            setState(() {
-                              isMic = false;
-                            });
-                          } else if (widget.msg.text.isEmpty) {
-                            setState(() {
-                              isMic = true;
-                            });
-                          }
-                        },
+                        onChanged: (value) => setState(() => isMic = widget.msg.text.isEmpty),
                         textAlignVertical: TextAlignVertical.top,
                         cursorColor: AppColors.kColorWhite,
-                        style: kTextStylePoppins300.copyWith(
-                          color: AppColors.kColorWhite,
-                        ),
+                        style: kTextStylePoppins300.copyWith(color: AppColors.kColorWhite),
                         controller: widget.msg,
                         keyboardType: TextInputType.multiline,
                         minLines: 1,
                         maxLines: 7,
                         decoration: InputDecoration(
                           border: InputBorder.none,
-
                           isDense: true,
-                          contentPadding: EdgeInsets.only(
-                              left: 20.w,
-                              bottom: 15.h,
-                              top: 15.h,
-                              right: 100.w),
-                          disabledBorder: InputBorder.none,
-                          // border: OutlineInputBorder(
-                          //   borderSide:
-                          //       BorderSide(color: AppColors.kColorWhite),
-                          //   borderRadius: BorderRadius.circular(20.r),
-                          // ),
-                          // focusedBorder: OutlineInputBorder(
-                          //   borderSide: BorderSide(
-                          //       color: AppColors.kColorWhite, width: 2.0),
-                          //   borderRadius: BorderRadius.circular(20.r),
-                          // ),
-                          // enabledBorder: OutlineInputBorder(
-                          //   borderSide: BorderSide(
-                          //       color: AppColors.kColorWhite, width: 1.0),
-                          //   borderRadius: BorderRadius.circular(20.r),
-                          // ),
+                          contentPadding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 15.h),
                           hintText: 'Enter Your Message',
-                          hintStyle: kTextStylePoppins300.copyWith(
-                              height: 1, color: AppColors.kColorWhite),
+                          hintStyle: kTextStylePoppins300.copyWith(height: 1, color: AppColors.kColorWhite),
                         ),
                       ),
                       Positioned(
@@ -212,114 +140,12 @@ class _BottomBoxWidgetState extends State<BottomBoxWidget> {
                           children: [
                             if (_selectedImage == null)
                               GestureDetector(
-                                onTap: setProfileImage, // Trigger image picker
-                                child: Container(
-                                  margin: EdgeInsets.only(right: 8.w, top: 6.h),
-                                  height: 35.h,
-                                  width: 35.h,
-                                  decoration: BoxDecoration(
-                                    color: AppColors.kColorBlue,
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: Center(
-                                    child: Icon(
-                                      Icons.image,
-                                      color: AppColors.kColorWhite,
-                                    ),
-                                  ),
-                                ),
+                                onTap: _pickProfileImage,
+                                child: _buildIconContainer(Icons.image),
                               ),
-                            BlocBuilder<ChatBloc, ChatState>(
-                              builder: (context, state) {
-                                if (state is ChatLoaded) {
-                                  final isNewChat = state.isNewChat;
-                                  final date = state.data.date;
-                                  final index = state.index;
-                                  return BlocBuilder<UploadImageBloc,
-                                      UploadImageState>(
-                                    builder: (context, state) {
-                                      return GestureDetector(
-                                        onTap: () {
-                                          log("API CALLED FOR MSG : $isMic");
-                                          if (isMic) {
-                                            setState(() {
-                                              isListen = true;
-                                            });
-                                            _speechToText.isNotListening
-                                                ? _startListening()
-                                                : _stopListening();
-                                          } else {
-                                            log("API CALLED FOR MSG");
-                                            if (_selectedImage != null &&
-                                                state is UploadImageSuccess) {
-                                              context.read<ChatBloc>().add(
-                                                  ImageResponseReq(
-                                                    index: index,
-                                                      imagePath:
-                                                          _selectedImage!.path,
-                                                      date: date!,
-                                                      imageUrl: state
-                                                          .model.file1!.uri!,
-                                                      msg: widget.msg.text
-                                                          .trim(),
-                                                      mimeType: state.model
-                                                          .file1!.mimeType!,
-                                                      isNewChat: isNewChat));   
-                                            } else {
-                                              context.read<ChatBloc>().add(
-                                                  ChatRequest(
-                                                      isNewChat: isNewChat,
-                                                      index: index,
-                                                      msg: widget.msg.text
-                                                          .trim(),
-                                                      date: date!));
-
-                                              widget.scroll();
-                                              setState(() {
-                                                isMic = true;
-                                              });
-                                            }
-                                          }
-                                          widget.msg.clear();
-                                          setState(() {
-                                            _selectedImage = null;
-                                          });
-                                        },
-                                        child: Container(
-                                          margin: EdgeInsets.only(
-                                              right: 8.w, top: 6.h),
-                                          height: 35.h,
-                                          width: 35.h,
-                                          decoration: BoxDecoration(
-                                            color: AppColors.kColorBlue,
-                                            shape: BoxShape.circle,
-                                          ),
-                                          child: Center(
-                                            child: !isMic
-                                                ? Icon(
-                                                    Icons.send,
-                                                    color:
-                                                        AppColors.kColorWhite,
-                                                  )
-                                                : isListen
-                                                    ? Icon(
-                                                        Icons.mic,
-                                                        color: AppColors
-                                                            .kColorWhite,
-                                                      )
-                                                    : Icon(
-                                                        Icons.mic_off,
-                                                        color: AppColors
-                                                            .kColorWhite,
-                                                      ),
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                  );
-                                }
-                                return SizedBox();
-                              },
+                            GestureDetector(
+                              onTap: _handleMicOrSendAction,
+                              child: _buildIconContainer(isMic ? (isListening ? Icons.mic : Icons.mic_off) : Icons.send),
                             ),
                           ],
                         ),
@@ -331,6 +157,36 @@ class _BottomBoxWidgetState extends State<BottomBoxWidget> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  void _handleMicOrSendAction() {
+    if (isMic) {
+      setState(() => isListening = true);
+      _speechToText.isNotListening ? _startListening() : _stopListening();
+    } else {
+      widget.send;
+      setState(() {
+        isMic = true;
+        _selectedImage = null;
+      });
+      widget.scroll();
+    }
+  }
+  
+
+  Widget _buildIconContainer(IconData icon) {
+    return Container(
+      margin: EdgeInsets.only(right: 8.w, top: 6.h),
+      height: 35.h,
+      width: 35.h,
+      decoration: BoxDecoration(
+        color: AppColors.kColorBlue,
+        shape: BoxShape.circle,
+      ),
+      child: Center(
+        child: Icon(icon, color: AppColors.kColorWhite),
       ),
     );
   }
