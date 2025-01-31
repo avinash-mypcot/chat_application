@@ -144,7 +144,7 @@ class _BottomBoxWidgetState extends State<BottomBoxWidget> {
                                 child: _buildIconContainer(Icons.image),
                               ),
                             GestureDetector(
-                              onTap: _handleMicOrSendAction,
+                              onTap: widget.send,
                               child: _buildIconContainer(isMic ? (isListening ? Icons.mic : Icons.mic_off) : Icons.send),
                             ),
                           ],
