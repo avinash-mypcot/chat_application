@@ -11,7 +11,8 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/textstyles.dart';
 
 class BottomBoxWidget extends StatefulWidget {
-  const BottomBoxWidget({super.key, required this.scroll, required this.msg,required this.send});
+  const BottomBoxWidget(
+      {super.key, required this.scroll, required this.msg, required this.send});
   final VoidCallback scroll;
   final TextEditingController msg;
   final VoidCallback send;
@@ -33,44 +34,44 @@ class _BottomBoxWidgetState extends State<BottomBoxWidget> {
     // _initializeSpeech();
   }
 
-  void _initializeSpeech() async {
-    await _speechToText.initialize(onError: _onSpeechError);
-    setState(() {});
-  }
+  // void _initializeSpeech() async {
+  //   await _speechToText.initialize(onError: _onSpeechError);
+  //   setState(() {});
+  // }
 
-  void _onSpeechError(SpeechRecognitionError error) {
-    log('Speech recognition error: ${error.errorMsg}');
-    setState(() {
-      isListening = false;
-      isMic = true;
-    });
-  }
+  // void _onSpeechError(SpeechRecognitionError error) {
+  //   log('Speech recognition error: ${error.errorMsg}');
+  //   setState(() {
+  //     isListening = false;
+  //     isMic = true;
+  //   });
+  // }
 
-  void _startListening() async {
-    await _speechToText.listen(onResult: _onSpeechResult);
-    setState(() {});
-  }
+  // void _startListening() async {
+  //   await _speechToText.listen(onResult: _onSpeechResult);
+  //   setState(() {});
+  // }
 
-  void _stopListening() async {
-    await _speechToText.stop();
-    setState(() {});
-  }
+  // void _stopListening() async {
+  //   await _speechToText.stop();
+  //   setState(() {});
+  // }
 
-  void _onSpeechResult(SpeechRecognitionResult result) {
-    setState(() {
-      widget.msg.text = result.recognizedWords;
-      isMic = widget.msg.text.isEmpty;
-      isListening = false;
-    });
-  }
+  // void _onSpeechResult(SpeechRecognitionResult result) {
+  //   setState(() {
+  //     widget.msg.text = result.recognizedWords;
+  //     isMic = widget.msg.text.isEmpty;
+  //     isListening = false;
+  //   });
+  // }
 
   Future<void> _pickProfileImage() async {
     await showModelBottomSheet(
       context: context,
       imageFile: (File image) {
-        setState(() {
-          _selectedImage = image;
-        });
+        // setState(() {
+        //   _selectedImage = image;
+        // });
       },
     );
   }
@@ -100,13 +101,13 @@ class _BottomBoxWidgetState extends State<BottomBoxWidget> {
                         height: 50.h,
                         fit: BoxFit.fill,
                       ),
-                      Positioned(
-                        right: 2,
-                        child: GestureDetector(
-                          onTap: () => setState(() => _selectedImage = null),
-                          child: const Icon(Icons.cancel),
-                        ),
-                      )
+                      // Positioned(
+                      //   right: 2,
+                      //   child: GestureDetector(
+                      //     onTap: () => setState(() => _selectedImage = null),
+                      //     child: const Icon(Icons.cancel),
+                      //   ),
+                      // )
                     ],
                   ),
                 ),
@@ -117,10 +118,11 @@ class _BottomBoxWidgetState extends State<BottomBoxWidget> {
                   child: Stack(
                     children: [
                       TextFormField(
-                        onChanged: (value) => setState(() => isMic = widget.msg.text.isEmpty),
+                        // onChanged: (value) => setState(() => isMic = widget.msg.text.isEmpty),
                         textAlignVertical: TextAlignVertical.top,
                         cursorColor: AppColors.kColorWhite,
-                        style: kTextStylePoppins300.copyWith(color: AppColors.kColorWhite),
+                        style: kTextStylePoppins300.copyWith(
+                            color: AppColors.kColorWhite),
                         controller: widget.msg,
                         keyboardType: TextInputType.multiline,
                         minLines: 1,
@@ -128,9 +130,11 @@ class _BottomBoxWidgetState extends State<BottomBoxWidget> {
                         decoration: InputDecoration(
                           border: InputBorder.none,
                           isDense: true,
-                          contentPadding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 15.h),
+                          contentPadding: EdgeInsets.symmetric(
+                              horizontal: 20.w, vertical: 15.h),
                           hintText: 'Enter Your Message',
-                          hintStyle: kTextStylePoppins300.copyWith(height: 1, color: AppColors.kColorWhite),
+                          hintStyle: kTextStylePoppins300.copyWith(
+                              height: 1, color: AppColors.kColorWhite),
                         ),
                       ),
                       Positioned(
@@ -144,7 +148,7 @@ class _BottomBoxWidgetState extends State<BottomBoxWidget> {
                             //     child: _buildIconContainer(Icons.image),
                             GestureDetector(
                               onTap: widget.send,
-                              child: _buildIconContainer( Icons.send),
+                              child: _buildIconContainer(Icons.send),
                             ),
                           ],
                         ),
@@ -162,18 +166,17 @@ class _BottomBoxWidgetState extends State<BottomBoxWidget> {
 
   void _handleMicOrSendAction() {
     if (isMic) {
-      setState(() => isListening = true);
-      _speechToText.isNotListening ? _startListening() : _stopListening();
+      // setState(() => isListening = true);
+      // _speechToText.isNotListening ? _startListening() : _stopListening();
     } else {
       widget.send;
-      setState(() {
-        isMic = true;
-        _selectedImage = null;
-      });
+      // setState(() {
+      //   isMic = true;
+      //   _selectedImage = null;
+      // });
       widget.scroll();
     }
   }
-  
 
   Widget _buildIconContainer(IconData icon) {
     return Container(

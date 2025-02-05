@@ -19,7 +19,6 @@ import '../widgets/massege_widget.dart';
 
 @RoutePage()
 class ChatPage extends StatefulWidget {
-
   const ChatPage({super.key});
 
   @override
@@ -30,21 +29,19 @@ class _ChatPageState extends State<ChatPage> {
   final TextEditingController _userInput = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-final FirebaseAuth auth = FirebaseAuth.instance;
+  final FirebaseAuth auth = FirebaseAuth.instance;
   String? uId;
-  late String todayDate= DateFormat('yyyy-MM-dd').format(DateTime.now());
+  late String todayDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
 
   @override
   void initState() {
     super.initState();
-    uId =  auth.currentUser?.uid;
-    if (DateFormat('yyyy-MM-dd').format(DateTime.now()) == '2025-02-12' 
-    
-    ) {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      openVersionBottomSheet(context, '');
-    });
-  }
+    uId = auth.currentUser?.uid;
+    if (DateFormat('yyyy-MM-dd').format(DateTime.now()) == '2025-02-12') {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        openVersionBottomSheet(context, '');
+      });
+    }
   }
 
   @override
@@ -65,23 +62,22 @@ final FirebaseAuth auth = FirebaseAuth.instance;
       }
     });
   }
+
   String _scrambleText(String text) {
-  final random = Random();
-  const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#\$%^&*()_+-=[]{}|;:,.<>?';
-  
-  return text.split('').map((_) {
-    return chars[random.nextInt(chars.length)];
-  }).join('');
-}
+    final random = Random();
+    const chars =
+        'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#\$%^&*()_+-=[]{}|;:,.<>?';
 
-
+    return text.split('').map((_) {
+      return chars[random.nextInt(chars.length)];
+    }).join('');
+  }
 
   Future<void> _sendMessage() async {
     if (_userInput.text.trim().isEmpty) return;
 
     final chatRef = FirebaseFirestore.instance
         .collection('chatModels')
-       
         .doc(todayDate)
         .collection('messages');
 
@@ -99,7 +95,6 @@ final FirebaseAuth auth = FirebaseAuth.instance;
   Widget build(BuildContext context) {
     print("ENtire widget rebuild");
     return Scaffold(
-
       key: _scaffoldKey,
       resizeToAvoidBottomInset: false,
       backgroundColor: AppColors.kColorGrey,
@@ -107,13 +102,6 @@ final FirebaseAuth auth = FirebaseAuth.instance;
         scrolledUnderElevation: 0,
         centerTitle: true,
         backgroundColor: AppColors.kColorBlack.withOpacity(0.9),
-        // leading: GestureDetector(
-        //   onTap: () {
-        //     FocusManager.instance.primaryFocus?.unfocus();
-        //     _scaffoldKey.currentState!.openDrawer();
-        //   },
-        //   child: AppIcons.kMenuIc,
-        // ),
         title: Text(
           "Chat with us!",
           style: kTextStylePoppins400.copyWith(
@@ -123,9 +111,9 @@ final FirebaseAuth auth = FirebaseAuth.instance;
         ),
         actions: [
           BlocBuilder<CodeVerificationBloc, CodeVerificationState>(
-                  builder: (context, state) {
-                    if(state is! CodeVerified){
-   return GestureDetector(
+              builder: (context, state) {
+            if (state is! CodeVerified) {
+              return GestureDetector(
                 onTap: () {
                   // openVersionBottomSheet(context,'');
                   showDialog(
@@ -137,7 +125,6 @@ final FirebaseAuth auth = FirebaseAuth.instance;
                 child: Container(
                   margin: EdgeInsets.only(left: 12.w),
                   height: 40.h,
-              
                   child: Row(
                     children: [
                       SizedBox(
@@ -147,16 +134,13 @@ final FirebaseAuth auth = FirebaseAuth.instance;
                         Icons.info,
                         color: AppColors.kColorWhite,
                       ),
-              
                     ],
                   ),
                 ),
               );
-            
-                    }
-                    return SizedBox();
-           }
-          ),
+            }
+            return SizedBox();
+          }),
           SizedBox(width: 12.w),
         ],
       ),
@@ -173,65 +157,67 @@ final FirebaseAuth auth = FirebaseAuth.instance;
             ),
           ),
           Padding(
-              padding: EdgeInsets.only(
-                bottom: MediaQuery.of(context).viewInsets.bottom,
-              ),
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.of(context).viewInsets.bottom,
+            ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                Expanded(
-                  child:
-               StreamBuilder<QuerySnapshot>(
-              stream: FirebaseFirestore.instance
-                  .collection('chatModels')
-                  .doc(todayDate)
-                  .collection('messages')
-                  .orderBy('date', descending: false)
-                  .snapshots(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(child: CircularProgressIndicator());
-                }
-                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                  return Center(child: Text("No messages yet."));
-                }
-            
-                final messages = snapshot.data!.docs;
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  _scrollToEnd();
-                });
-            
-                return BlocBuilder<CodeVerificationBloc, CodeVerificationState>(
-                  builder: (context, state) {
-                    return 
-                    ListView.builder(
-            controller: _scrollController,
-            itemCount: messages.length,
-            itemBuilder: (context, index) {
-              final messageData = messages[index].data() as Map<String, dynamic>;
-              final bool isUserMessage = uId == messageData['isUser'];
-              final String originalMessage = messageData['message'] ?? '';
-            
-              // Encrypt message only if user is not verified
-              final bool isVerified = state is CodeVerified;
-              final String displayedMessage = isVerified
-                  ? originalMessage
-                  : _scrambleText(originalMessage);
-            print("LIST VIEW REFRESH");
-              return MessageWidget(
-                isUser: isUserMessage,
-                message: displayedMessage,
-                date: DateFormat('HH:mm').format(
-                  (messageData['date'] as Timestamp).toDate(),
+                Flexible(
+                  child: StreamBuilder<QuerySnapshot>(
+                    stream: FirebaseFirestore.instance
+                        .collection('chatModels')
+                        .doc(todayDate)
+                        .collection('messages')
+                        .orderBy('date', descending: false)
+                        .snapshots(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Center(child: CircularProgressIndicator());
+                      }
+                      if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                        return Center(child: Text("No messages yet."));
+                      }
+
+                      final messages = snapshot.data!.docs;
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        _scrollToEnd();
+                      });
+
+                      return BlocBuilder<CodeVerificationBloc,
+                          CodeVerificationState>(
+                        builder: (context, state) {
+                          return ListView.builder(
+                            controller: _scrollController,
+                            itemCount: messages.length,
+                            itemBuilder: (context, index) {
+                              final messageData = messages[index].data()
+                                  as Map<String, dynamic>;
+                              final bool isUserMessage =
+                                  uId == messageData['isUser'];
+                              final String originalMessage =
+                                  messageData['message'] ?? '';
+
+                              // Encrypt message only if user is not verified
+                              final bool isVerified = state is CodeVerified;
+                              final String displayedMessage = isVerified
+                                  ? originalMessage
+                                  : _scrambleText(originalMessage);
+                              print("LIST VIEW REFRESH");
+                              return MessageWidget(
+                                isUser: isUserMessage,
+                                message: displayedMessage,
+                                date: DateFormat('HH:mm').format(
+                                  (messageData['date'] as Timestamp).toDate(),
+                                ),
+                              );
+                            },
+                          );
+                        },
+                      );
+                    },
+                  ),
                 ),
-              );
-            },
-                    );
-                  },
-                );
-              },
-            ),
-              ),
                 BottomBoxWidget(
                   send: _sendMessage,
                   scroll: _scrollToEnd,
@@ -241,23 +227,20 @@ final FirebaseAuth auth = FirebaseAuth.instance;
               ],
             ),
           ),
-          BlocConsumer<CodeVerificationBloc,CodeVerificationState>(
-              builder:(context, state) {
-                if(state is! CodeVerificationFailed && state is! CodeVerified ){
-                    return CodeVerificationPopup();
-                }
-                return SizedBox();
-                
+          BlocConsumer<CodeVerificationBloc, CodeVerificationState>(
+            builder: (context, state) {
+              if (state is! CodeVerificationFailed && state is! CodeVerified) {
+                return CodeVerificationPopup();
+              }
+              return SizedBox();
             },
-            listener:(context,state){
-              if(state is CodeVerificationFailed || state is CodeVerified ){
-
-                }else{                }
+            listener: (context, state) {
+              if (state is CodeVerificationFailed || state is CodeVerified) {
+              } else {}
             },
-            )
+          )
         ],
       ),
-      // drawer: DrawerWidget(),
     );
   }
 }

@@ -26,14 +26,14 @@ import 'package:flutter/material.dart' as _i7;
 /// [_i1.ChatPage]
 class ChatRoute extends _i6.PageRouteInfo<void> {
   const ChatRoute({List<_i6.PageRouteInfo>? children})
-    : super(ChatRoute.name, initialChildren: children);
+      : super(ChatRoute.name, initialChildren: children);
 
   static const String name = 'ChatRoute';
 
   static _i6.PageInfo page = _i6.PageInfo(
     name,
     builder: (data) {
-      return const _i1.ChatPage();
+      return _i1.ChatPage();
     },
   );
 }
@@ -42,7 +42,7 @@ class ChatRoute extends _i6.PageRouteInfo<void> {
 /// [_i2.HistoryPage]
 class HistoryRoute extends _i6.PageRouteInfo<void> {
   const HistoryRoute({List<_i6.PageRouteInfo>? children})
-    : super(HistoryRoute.name, initialChildren: children);
+      : super(HistoryRoute.name, initialChildren: children);
 
   static const String name = 'HistoryRoute';
 
@@ -58,11 +58,11 @@ class HistoryRoute extends _i6.PageRouteInfo<void> {
 /// [_i3.ProfilePage]
 class ProfileRoute extends _i6.PageRouteInfo<ProfileRouteArgs> {
   ProfileRoute({_i7.Key? key, List<_i6.PageRouteInfo>? children})
-    : super(
-        ProfileRoute.name,
-        args: ProfileRouteArgs(key: key),
-        initialChildren: children,
-      );
+      : super(
+          ProfileRoute.name,
+          args: ProfileRouteArgs(key: key),
+          initialChildren: children,
+        );
 
   static const String name = 'ProfileRoute';
 
@@ -92,7 +92,7 @@ class ProfileRouteArgs {
 /// [_i4.SignInPage]
 class SignInRoute extends _i6.PageRouteInfo<void> {
   const SignInRoute({List<_i6.PageRouteInfo>? children})
-    : super(SignInRoute.name, initialChildren: children);
+      : super(SignInRoute.name, initialChildren: children);
 
   static const String name = 'SignInRoute';
 
@@ -108,7 +108,7 @@ class SignInRoute extends _i6.PageRouteInfo<void> {
 /// [_i5.SignUpPage]
 class SignUpRoute extends _i6.PageRouteInfo<void> {
   const SignUpRoute({List<_i6.PageRouteInfo>? children})
-    : super(SignUpRoute.name, initialChildren: children);
+      : super(SignUpRoute.name, initialChildren: children);
 
   static const String name = 'SignUpRoute';
 
