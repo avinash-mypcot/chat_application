@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+// import 'package:chat_application/feature/contact/presentation/pages/contact_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'app_router.gr.dart';
 
@@ -30,5 +31,6 @@ class AppRouter extends RootStackRouter {
         FirebaseAuth.instance.currentUser == null
             ? AutoRoute(page: ChatRoute.page)
             : AutoRoute(page: ChatRoute.page, path: '/'),
+            // AutoRoute(page: ContactRoute.page,)
       ];
 }

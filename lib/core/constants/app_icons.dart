@@ -8,5 +8,7 @@ class AppIcons {
     color: AppColors.kColorWhite,
   );
   static const String kNewChatIc = 'assets/icons/new_chat_Ic.svg';
+  static const appUpdateIc = 'assets/icons/update_ic.svg';
+
 
 }

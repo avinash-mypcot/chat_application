@@ -125,33 +125,33 @@ class _SignInPageState extends State<SignInPage> {
                           ),
                         ),
                         SizedBox(height: 30.h),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              "Create an account? ",
-                              style: kTextStylePoppins300.copyWith(
-                                color: AppColors.kColorWhite
-                                    .withValues(alpha: 0.9),
-                              ),
-                            ),
-                            GestureDetector(
-                              onTap: () {
-                                context.router.replace(SignUpRoute());
-                              },
-                              child: Text(
-                                "Register",
-                                style: kTextStylePoppins300.copyWith(
-                                  decoration: TextDecoration.underline,
-                                  decorationColor: AppColors.kColorWhite
-                                      .withValues(alpha: 0.9),
-                                  color: AppColors.kColorWhite
-                                      .withValues(alpha: 0.9),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+                        // Row(
+                        //   mainAxisAlignment: MainAxisAlignment.center,
+                        //   children: [
+                        //     Text(
+                        //       "Create an account? ",
+                        //       style: kTextStylePoppins300.copyWith(
+                        //         color: AppColors.kColorWhite
+                        //             .withValues(alpha: 0.9),
+                        //       ),
+                        //     ),
+                        //     GestureDetector(
+                        //       onTap: () {
+                        //         context.router.replace(SignUpRoute());
+                        //       },
+                        //       child: Text(
+                        //         "Register",
+                        //         style: kTextStylePoppins300.copyWith(
+                        //           decoration: TextDecoration.underline,
+                        //           decorationColor: AppColors.kColorWhite
+                        //               .withValues(alpha: 0.9),
+                        //           color: AppColors.kColorWhite
+                        //               .withValues(alpha: 0.9),
+                        //         ),
+                        //       ),
+                        //     ),
+                        //   ],
+                        // ),
                       ],
                     ),
                   ),
@@ -174,7 +174,10 @@ class _SignInPageState extends State<SignInPage> {
                   SnackBar(content: Text(state.errorMessage)),
                 );
               } else if (state is SigninSuccessState) {
-                context.router.replace(ChatRoute());
+                state.model.message != "User already signed in"?
+                context.router.replace(ChatRoute()):ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text(state.model.message)),
+                );
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text(state.model.message)),
                 );

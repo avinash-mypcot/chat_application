@@ -114,9 +114,7 @@ class FirebaseChatApi {
       final firestore = FirebaseFirestore.instance;
       final FirebaseAuth auth = FirebaseAuth.instance;
       final uId = auth.currentUser!.uid;
-      // Get today's date in 'yyyy-MM-dd' format for document ID
-      // String documentId = DateFormat('yyyy-MM-dd').format(DateTime.now());
-
+    
       // Extract the parts to be appended
       List<dynamic> newParts = chatModel.candidates!
           .expand((candidate) => candidate.content?.parts ?? [])
@@ -133,7 +131,7 @@ class FirebaseChatApi {
 
       // Check if the document exists
       final docSnapshot = await docRef.get();
-
+log("data : ${docSnapshot}");
       if (docSnapshot.exists) {
         // Append new parts to the existing parts in Firestore
         if (isNewChat) {

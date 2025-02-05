@@ -1,5 +1,7 @@
 import 'dart:developer';
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -44,12 +46,18 @@ class _CodeVerificationPopupState extends State<CodeVerificationPopup> {
                   Text("Enter Verification Code", style: kTextStylePoppins400.copyWith(fontSize: 18, fontWeight: FontWeight.bold)),
                   SizedBox(height: 10.h),
                   TextField(
-                    controller: _codeController,
-                    decoration: InputDecoration(border: OutlineInputBorder(), hintText: "Enter Code"),
-                    keyboardType: TextInputType.number,
-                    style: kTextStylePoppins400.copyWith(
-                fontSize: 16.sp, ),
-                  ),
+  controller: _codeController,
+  decoration: InputDecoration(
+    border: OutlineInputBorder(),
+    hintText: "Enter Code",
+  ),
+  keyboardType: TextInputType.number,
+  style: kTextStylePoppins400.copyWith(fontSize: 16.sp),
+  inputFormatters: [
+    LengthLimitingTextInputFormatter(10), // Limit to 10 digits
+    FilteringTextInputFormatter.digitsOnly, // Allow digits only
+  ],
+),
                   SizedBox(height: 20.h),
                   state is CodeVerifying
                       ? CircularProgressIndicator()
@@ -65,7 +73,7 @@ class _CodeVerificationPopupState extends State<CodeVerificationPopup> {
                                 
                                   context.read<CodeVerificationBloc>().add(VerifyCode(code));
                               context.read<ChatBloc>().add(GetTodayChat(isVerified:  false));
-                             
+                             context.router.maybePop();
                                 
                               },
                               child: Text("Cancel",style: kTextStylePoppins400.copyWith(
@@ -81,6 +89,7 @@ class _CodeVerificationPopupState extends State<CodeVerificationPopup> {
                                 if (code.isNotEmpty) {
                                   context.read<CodeVerificationBloc>().add(VerifyCode(code));
                               context.read<ChatBloc>().add(GetTodayChat(isVerified: code == '12345'));
+                              context.router.maybePop();
                                 }
                               },
                               child: Text("Verify",style: kTextStylePoppins400.copyWith(

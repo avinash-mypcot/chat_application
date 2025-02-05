@@ -10,7 +10,7 @@ class CodeVerificationBloc extends Bloc<CodeVerificationEvent, CodeVerificationS
   }
 
   void mapEventToState(VerifyCode event,Emitter<CodeVerificationState> emit) async{
-    emit(CodeVerifying());
+    // emit(CodeVerifying());
     
       if (event.code == "12345") {  // Replace with actual logic
       emit(CodeVerified());

@@ -1,11 +1,15 @@
 import 'dart:developer';
+import 'dart:math';
 import 'package:auto_route/annotations.dart';
+import 'package:auto_route/auto_route.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
+
+import '../../../../core/common/popup/update_popup.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/textstyles.dart';
 import '../../../code_verification/bloc/code_verification_bloc.dart';
@@ -34,6 +38,13 @@ final FirebaseAuth auth = FirebaseAuth.instance;
   void initState() {
     super.initState();
     uId =  auth.currentUser?.uid;
+    if (DateFormat('yyyy-MM-dd').format(DateTime.now()) == '2025-02-12' 
+    
+    ) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      openVersionBottomSheet(context, '');
+    });
+  }
   }
 
   @override
@@ -55,10 +66,14 @@ final FirebaseAuth auth = FirebaseAuth.instance;
     });
   }
   String _scrambleText(String text) {
-  return text.split('').map((char) {
-    return String.fromCharCode(char.codeUnitAt(0) + 2); // Shift characters
+  final random = Random();
+  const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#\$%^&*()_+-=[]{}|;:,.<>?';
+  
+  return text.split('').map((_) {
+    return chars[random.nextInt(chars.length)];
   }).join('');
 }
+
 
 
   Future<void> _sendMessage() async {
@@ -82,7 +97,9 @@ final FirebaseAuth auth = FirebaseAuth.instance;
 
   @override
   Widget build(BuildContext context) {
+    print("ENtire widget rebuild");
     return Scaffold(
+
       key: _scaffoldKey,
       resizeToAvoidBottomInset: false,
       backgroundColor: AppColors.kColorGrey,
@@ -105,6 +122,41 @@ final FirebaseAuth auth = FirebaseAuth.instance;
           ),
         ),
         actions: [
+          BlocBuilder<CodeVerificationBloc, CodeVerificationState>(
+                  builder: (context, state) {
+                    if(state is! CodeVerified){
+   return GestureDetector(
+                onTap: () {
+                  // openVersionBottomSheet(context,'');
+                  showDialog(
+                      context: context,
+                      builder: (context) {
+                        return CodeVerificationPopup();
+                      });
+                },
+                child: Container(
+                  margin: EdgeInsets.only(left: 12.w),
+                  height: 40.h,
+              
+                  child: Row(
+                    children: [
+                      SizedBox(
+                        width: 12.w,
+                      ),
+                      Icon(
+                        Icons.info,
+                        color: AppColors.kColorWhite,
+                      ),
+              
+                    ],
+                  ),
+                ),
+              );
+            
+                    }
+                    return SizedBox();
+           }
+          ),
           SizedBox(width: 12.w),
         ],
       ),
@@ -151,7 +203,8 @@ final FirebaseAuth auth = FirebaseAuth.instance;
             
                 return BlocBuilder<CodeVerificationBloc, CodeVerificationState>(
                   builder: (context, state) {
-                    return ListView.builder(
+                    return 
+                    ListView.builder(
             controller: _scrollController,
             itemCount: messages.length,
             itemBuilder: (context, index) {
@@ -164,7 +217,7 @@ final FirebaseAuth auth = FirebaseAuth.instance;
               final String displayedMessage = isVerified
                   ? originalMessage
                   : _scrambleText(originalMessage);
-            
+            print("LIST VIEW REFRESH");
               return MessageWidget(
                 isUser: isUserMessage,
                 message: displayedMessage,
@@ -191,10 +244,8 @@ final FirebaseAuth auth = FirebaseAuth.instance;
           BlocConsumer<CodeVerificationBloc,CodeVerificationState>(
               builder:(context, state) {
                 if(state is! CodeVerificationFailed && state is! CodeVerified ){
-                  log("State $state");
                     return CodeVerificationPopup();
                 }
-                 log("State $state");
                 return SizedBox();
                 
             },

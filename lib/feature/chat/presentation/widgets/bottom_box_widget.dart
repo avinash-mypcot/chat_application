@@ -30,7 +30,7 @@ class _BottomBoxWidgetState extends State<BottomBoxWidget> {
   @override
   void initState() {
     super.initState();
-    _initializeSpeech();
+    // _initializeSpeech();
   }
 
   void _initializeSpeech() async {
@@ -138,14 +138,13 @@ class _BottomBoxWidgetState extends State<BottomBoxWidget> {
                         bottom: 7.h,
                         child: Row(
                           children: [
-                            if (_selectedImage == null)
-                              GestureDetector(
-                                onTap: _pickProfileImage,
-                                child: _buildIconContainer(Icons.image),
-                              ),
+                            // if (_selectedImage == null)
+                            //   GestureDetector(
+                            //     onTap: _pickProfileImage,
+                            //     child: _buildIconContainer(Icons.image),
                             GestureDetector(
                               onTap: widget.send,
-                              child: _buildIconContainer(isMic ? (isListening ? Icons.mic : Icons.mic_off) : Icons.send),
+                              child: _buildIconContainer( Icons.send),
                             ),
                           ],
                         ),
