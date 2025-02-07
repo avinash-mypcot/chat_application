@@ -5,7 +5,8 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/textstyles.dart';
 
 class BottomBoxWidget extends StatefulWidget {
-  const BottomBoxWidget({super.key, required this.scroll, required this.msg,required this.send});
+  const BottomBoxWidget(
+      {super.key, required this.scroll, required this.msg, required this.send});
   final VoidCallback scroll;
   final TextEditingController msg;
   final VoidCallback send;
@@ -13,6 +14,7 @@ class BottomBoxWidget extends StatefulWidget {
   @override
   State<BottomBoxWidget> createState() => _BottomBoxWidgetState();
 }
+
 class _BottomBoxWidgetState extends State<BottomBoxWidget> {
   bool isMic = true;
   bool isListening = false;
@@ -23,10 +25,10 @@ class _BottomBoxWidgetState extends State<BottomBoxWidget> {
   void initState() {
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
-    return 
-    Padding(
+    return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Container(
         decoration: BoxDecoration(
@@ -49,13 +51,13 @@ class _BottomBoxWidgetState extends State<BottomBoxWidget> {
                         height: 50.h,
                         fit: BoxFit.fill,
                       ),
-                      Positioned(
-                        right: 2,
-                        child: GestureDetector(
-                          onTap: () => setState(() => _selectedImage = null),
-                          child: const Icon(Icons.cancel),
-                        ),
-                      )
+                      // Positioned(
+                      //   right: 2,
+                      //   child: GestureDetector(
+                      //     onTap: () => setState(() => _selectedImage = null),
+                      //     child: const Icon(Icons.cancel),
+                      //   ),
+                      // )
                     ],
                   ),
                 ),
@@ -70,26 +72,30 @@ class _BottomBoxWidgetState extends State<BottomBoxWidget> {
                         child: TextFormField(
                           textAlignVertical: TextAlignVertical.top,
                           cursorColor: AppColors.kColorWhite,
-                          style: kTextStylePoppins300.copyWith(color: AppColors.kColorWhite),
+                          style: kTextStylePoppins300.copyWith(
+                              color: AppColors.kColorWhite),
                           controller: widget.msg,
                           keyboardType: TextInputType.multiline,
                           minLines: 1,
                           maxLines: 7,
                           decoration: InputDecoration(
-                            suffixIcon: IconButton(onPressed: (){}, icon: GestureDetector(
-                              onTap: widget.send,
-                              child: _buildIconContainer( Icons.send),
-                            ),),
+                            suffixIcon: IconButton(
+                              onPressed: () {},
+                              icon: GestureDetector(
+                                onTap: widget.send,
+                                child: _buildIconContainer(Icons.send),
+                              ),
+                            ),
                             border: InputBorder.none,
                             isDense: true,
-                            contentPadding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 15.h),
+                            contentPadding: EdgeInsets.symmetric(
+                                horizontal: 20.w, vertical: 15.h),
                             hintText: 'Enter Your Message',
-                            hintStyle: kTextStylePoppins300.copyWith(height: 1, color: AppColors.kColorWhite),
+                            hintStyle: kTextStylePoppins300.copyWith(
+                                height: 1, color: AppColors.kColorWhite),
                           ),
-                          
                         ),
                       ),
-                      
                     ],
                   ),
                 ),
@@ -110,7 +116,11 @@ class _BottomBoxWidgetState extends State<BottomBoxWidget> {
         shape: BoxShape.circle,
       ),
       child: Center(
-        child: Icon(icon, color: AppColors.kColorWhite,size: 20.sp,),
+        child: Icon(
+          icon,
+          color: AppColors.kColorWhite,
+          size: 20.sp,
+        ),
       ),
     );
   }

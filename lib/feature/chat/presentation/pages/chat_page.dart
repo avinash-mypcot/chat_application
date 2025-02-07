@@ -241,7 +241,6 @@ class _ChatPageState extends State<ChatPage> {
           )
         ],
       ),
-      // drawer: DrawerWidget(),
     );
   }
 }
