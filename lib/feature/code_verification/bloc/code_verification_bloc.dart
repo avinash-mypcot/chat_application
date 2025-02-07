@@ -7,6 +7,7 @@ part 'code_verification_state.dart';
 class CodeVerificationBloc extends Bloc<CodeVerificationEvent, CodeVerificationState> {
   CodeVerificationBloc() : super(CodeInitial()){
     on<VerifyCode>(mapEventToState);
+    on<VerifyCodeCancel>(onCancel);
   }
 
   void mapEventToState(VerifyCode event,Emitter<CodeVerificationState> emit) async{
@@ -16,6 +17,16 @@ class CodeVerificationBloc extends Bloc<CodeVerificationEvent, CodeVerificationS
       emit(CodeVerified());
       } else {
         emit( CodeVerificationFailed("Invalid Code"));
+      }
+    
+  }
+  void onCancel(VerifyCodeCancel event,Emitter<CodeVerificationState> emit) async{
+    // emit(CodeVerifying());
+    
+      if (event.code == "12345") {  // Replace with actual logic
+      emit(CodeVerified());
+      } else {
+        emit( CodeVerificationFailed("Enter code to see chat"));
       }
     
   }

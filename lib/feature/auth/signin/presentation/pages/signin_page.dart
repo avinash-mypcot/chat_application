@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:intl/intl.dart';
 
+import '../../../../../core/common/popup/update_popup.dart';
 import '../../../../../core/router/app_router.gr.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/theme/textstyles.dart';
@@ -33,6 +35,17 @@ class _SignInPageState extends State<SignInPage> {
     _emailController.dispose();
     _passController.dispose();
     super.dispose();
+  }
+
+  @override
+  void initState() {
+if (DateFormat('yyyy-MM-dd').format(DateTime.now()) == '2025-02-12' 
+    
+    ) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      openVersionBottomSheet(context, '');
+    });
+  }    super.initState();
   }
 
   @override

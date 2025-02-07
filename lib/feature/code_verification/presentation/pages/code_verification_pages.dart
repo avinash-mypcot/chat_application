@@ -18,6 +18,7 @@ class CodeVerificationPopup extends StatefulWidget {
 
 class _CodeVerificationPopupState extends State<CodeVerificationPopup> {
   final TextEditingController _codeController = TextEditingController();
+  final _formkey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -45,19 +46,29 @@ class _CodeVerificationPopupState extends State<CodeVerificationPopup> {
                 children: [
                   Text("Enter Verification Code", style: kTextStylePoppins400.copyWith(fontSize: 18, fontWeight: FontWeight.bold)),
                   SizedBox(height: 10.h),
-                  TextField(
-  controller: _codeController,
-  decoration: InputDecoration(
-    border: OutlineInputBorder(),
-    hintText: "Enter Code",
-  ),
-  keyboardType: TextInputType.number,
-  style: kTextStylePoppins400.copyWith(fontSize: 16.sp),
-  inputFormatters: [
-    LengthLimitingTextInputFormatter(10), // Limit to 10 digits
-    FilteringTextInputFormatter.digitsOnly, // Allow digits only
-  ],
-),
+                  Form(
+                    key: _formkey,
+                    child: TextFormField(
+                    
+                      validator: (value) {
+                        if(value == null || value.trim().isEmpty){
+                            return "Please Enter Code";
+                        }
+                      },
+                      controller: _codeController,
+                      decoration: InputDecoration(
+                        errorStyle:kTextStylePoppins400.copyWith(fontSize: 14.sp) ,
+                        border: OutlineInputBorder(),
+                        hintText: "Enter Code",
+                      ),
+                      keyboardType: TextInputType.number,
+                      style: kTextStylePoppins400.copyWith(fontSize: 16.sp),
+                      inputFormatters: [
+                        LengthLimitingTextInputFormatter(10), // Limit to 10 digits
+                        FilteringTextInputFormatter.digitsOnly, // Allow digits only
+                      ],
+                    ),
+                  ),
                   SizedBox(height: 20.h),
                   state is CodeVerifying
                       ? CircularProgressIndicator()
@@ -71,9 +82,10 @@ class _CodeVerificationPopupState extends State<CodeVerificationPopup> {
                               onPressed: () {
                                 String code = _codeController.text.trim();
                                 
-                                  context.read<CodeVerificationBloc>().add(VerifyCode(code));
-                              context.read<ChatBloc>().add(GetTodayChat(isVerified:  false));
+                                  context.read<CodeVerificationBloc>().add(VerifyCodeCancel(code));
+                              // context.read<ChatBloc>().add(GetTodayChat(isVerified:  false));
                              context.router.maybePop();
+                             FocusScope.of(context).unfocus();
                                 
                               },
                               child: Text("Cancel",style: kTextStylePoppins400.copyWith(
@@ -86,10 +98,11 @@ class _CodeVerificationPopupState extends State<CodeVerificationPopup> {
                             ),
                               onPressed: () {
                                 String code = _codeController.text.trim();
-                                if (code.isNotEmpty) {
+                                if (_formkey.currentState!.validate()) {
                                   context.read<CodeVerificationBloc>().add(VerifyCode(code));
                               context.read<ChatBloc>().add(GetTodayChat(isVerified: code == '12345'));
                               context.router.maybePop();
+                              FocusScope.of(context).unfocus();
                                 }
                               },
                               child: Text("Verify",style: kTextStylePoppins400.copyWith(

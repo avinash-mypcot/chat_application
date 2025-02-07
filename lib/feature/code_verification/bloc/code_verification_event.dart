@@ -13,3 +13,11 @@ class VerifyCode extends CodeVerificationEvent {
   @override
   List<Object> get props => [code];
 }
+class VerifyCodeCancel extends CodeVerificationEvent {
+  final String code;
+
+  VerifyCodeCancel(this.code);
+
+  @override
+  List<Object> get props => [code];
+}
